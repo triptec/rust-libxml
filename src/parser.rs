@@ -15,7 +15,7 @@ enum XmlParserOption {
     Noerror = 32, // suppress error reports
     Nowarning = 64, // suppress warning reports
     // XML_PARSE_PEDANTIC = 128, // pedantic error reporting
-    // XML_PARSE_NOBLANKS = 256, // remove blank nodes
+    NoBlanks = 256, // remove blank nodes
     // XML_PARSE_NONET = 2048, // Forbid network access
     // XML_PARSE_NOIMPLIED = 8192, // Do not add implied Xml/body... elements
     // XML_PARSE_COMPACT = 65536, // compact small text nodes
@@ -82,7 +82,8 @@ impl Parser {
     let c_utf8 = CString::new("utf-8").unwrap();
     let options : u32 = XmlParserOption::Recover as u32 +
                         XmlParserOption::Noerror as u32 +
-                        XmlParserOption::Nowarning as u32;
+                        XmlParserOption::Nowarning as u32 +
+                        XmlParserOption::NoBlanks as u32;
     match self.format {
       ParseFormat::XML => { unsafe {
         xmlKeepBlanksDefault(1);
@@ -120,7 +121,8 @@ impl Parser {
       ParseFormat::XML => { unsafe {
         let options : u32 = XmlParserOption::Recover as u32 +
                             XmlParserOption::Noerror as u32 +
-                            XmlParserOption::Nowarning as u32;
+                            XmlParserOption::Nowarning as u32 +
+                            XmlParserOption::NoBlanks as u32;
         let docptr = xmlReadDoc(c_string.as_ptr(), c_url.as_ptr(), c_utf8.as_ptr(), options);
         if docptr.is_null() {
           Err(XmlParseError::GotNullPointer)
